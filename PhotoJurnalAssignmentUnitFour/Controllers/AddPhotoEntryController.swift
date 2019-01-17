@@ -17,13 +17,25 @@ class AddPhotoEntryController: UIViewController {
   
   @IBOutlet weak var addDescription: UITextView!
   
+  private var addDescriptionPlaceHolder = "Add description here..."
+  
   private var imagePickerController: UIImagePickerController!
   
+  var photoSelected = UIImage()
   override func viewDidLoad() {
     super.viewDidLoad()
     setupPhotoViewController()
     
   }
+  
+//  private func updateUI() {
+//    if let photo = PhotoJournalModel.getPhotoJournal() {
+//     let image = UIImage(data: photo.imageData)
+//    } else {
+//     print("photo journal does not exist")
+//    }
+//
+//  }
   
   private func setupPhotoViewController() {
     imagePickerController = UIImagePickerController()
@@ -38,18 +50,26 @@ class AddPhotoEntryController: UIViewController {
     present(imagePickerController, animated:  true, completion: nil)
   }
   
-  private func savePhotoJournal(image: UIImage) {
-    if let imageData = image.jpegData(compressionQuality: 0.5) {
-      let photoJournal = PhotoJournal.init(createdAt: "no date", imageData: imageData, description: "Cool Wall Paper")
-      PhotoJournalModel.savePhotoJournal(photoJournal: photoJournal)
-    }
-  }
+//  private func savePhotoJournal(image: UIImage) {
+//    if let imageData = image.jpegData(compressionQuality: 0.5) {
+//      let photoJournal = PhotoJournal.init(createdAt: "no date", imageData: imageData, description: "Cool Wall Paper")
+//      PhotoJournalModel.savePhotoJournal()
+//    }
+//  }
 
   
   @IBAction func savePhotoButtonPressed(_ sender: UIButton) {
-    
-  
-    
+    guard let textCaption = addDescription.text else {return}
+    guard let photo = addImage.image else {return}
+    let date = Date()
+    let isoDateFormatter = ISO8601DateFormatter()
+    isoDateFormatter.formatOptions = [.withFullDate, .withFullTime, .withInternetDateTime, .withTimeZone, .withDashSeparatorInDate]
+    let timestamp = isoDateFormatter.string(from: date)
+    if let imageData = photo.jpegData(compressionQuality: 0.5) {
+      let photoJournal = PhotoJournal.init(createdAt:timestamp, imageData: imageData, description: textCaption)
+      PhotoJournalModel.savePhotoJournal()
+    }
+    dismiss(animated: true, completion: nil)
   }
   
   
@@ -80,7 +100,9 @@ extension AddPhotoEntryController: UIImagePickerControllerDelegate, UINavigation
   }
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-      savePhotoJournal(image: image)
+//      savePhotoJournal(image: image)
+      addImage.image = image
+      photoSelected = image
     } else {
      print("original image is nil")
     }
