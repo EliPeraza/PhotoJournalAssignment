@@ -17,6 +17,7 @@ final class PhotoJournalModel {
   
   static func savePhotoJournal() {
     let path = DataPersistenceManager.filePathToDocumentsDirectory(filename: filename)
+    print(path)
     
     do {
       let data = try PropertyListEncoder().encode(photoItems)
@@ -27,13 +28,12 @@ final class PhotoJournalModel {
     }
   }
   
-  static func getPhotoJournal() -> [PhotoJournal?] {
+  static func getPhotoJournal() -> [PhotoJournal] {
     let path = DataPersistenceManager.filePathToDocumentsDirectory(filename: filename).path
-    var photoJournal: [PhotoJournal?]
     if FileManager.default.fileExists(atPath: path){
       if let data = FileManager.default.contents(atPath: path) {
         do {
-          photoJournal = try PropertyListDecoder().decode([PhotoJournal].self, from: data)
+          photoItems = try PropertyListDecoder().decode([PhotoJournal].self, from: data)
         } catch {
           print("property list decoding error: \(error)")
         }
@@ -46,4 +46,13 @@ final class PhotoJournalModel {
     photoItems = photoItems.sorted { $0.date > $1.date }
     return photoItems
   }
+  
+  static func addIEntry(item: PhotoJournal) {
+    photoItems.append(item)
+    savePhotoJournal()
+  }
+  
+  
+  
+  
 }

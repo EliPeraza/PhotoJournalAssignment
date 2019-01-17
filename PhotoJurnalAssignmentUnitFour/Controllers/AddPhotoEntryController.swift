@@ -24,18 +24,16 @@ class AddPhotoEntryController: UIViewController {
   var photoSelected = UIImage()
   override func viewDidLoad() {
     super.viewDidLoad()
+    addDescription.becomeFirstResponder()
     setupPhotoViewController()
-    
+    setUpTextViews()
+    addDescription.delegate = self
   }
   
-//  private func updateUI() {
-//    if let photo = PhotoJournalModel.getPhotoJournal() {
-//     let image = UIImage(data: photo.imageData)
-//    } else {
-//     print("photo journal does not exist")
-//    }
-//
-//  }
+  private func setUpTextViews() {
+    addDescription.text = addDescriptionPlaceHolder
+    addDescription.textColor = .gray
+  }
   
   private func setupPhotoViewController() {
     imagePickerController = UIImagePickerController()
@@ -50,13 +48,13 @@ class AddPhotoEntryController: UIViewController {
     present(imagePickerController, animated:  true, completion: nil)
   }
   
-//  private func savePhotoJournal(image: UIImage) {
-//    if let imageData = image.jpegData(compressionQuality: 0.5) {
-//      let photoJournal = PhotoJournal.init(createdAt: "no date", imageData: imageData, description: "Cool Wall Paper")
-//      PhotoJournalModel.savePhotoJournal()
-//    }
-//  }
-
+  //  private func savePhotoJournal(image: UIImage) {
+  //    if let imageData = image.jpegData(compressionQuality: 0.5) {
+  //      let photoJournal = PhotoJournal.init(createdAt: "no date", imageData: imageData, description: "Cool Wall Paper")
+  //      PhotoJournalModel.savePhotoJournal()
+  //    }
+  //  }
+  
   
   @IBAction func savePhotoButtonPressed(_ sender: UIButton) {
     guard let textCaption = addDescription.text else {return}
@@ -66,8 +64,10 @@ class AddPhotoEntryController: UIViewController {
     isoDateFormatter.formatOptions = [.withFullDate, .withFullTime, .withInternetDateTime, .withTimeZone, .withDashSeparatorInDate]
     let timestamp = isoDateFormatter.string(from: date)
     if let imageData = photo.jpegData(compressionQuality: 0.5) {
-      let photoJournal = PhotoJournal.init(createdAt:timestamp, imageData: imageData, description: textCaption)
-      PhotoJournalModel.savePhotoJournal()
+    
+      let photoItemToSave = PhotoJournal.init(createdAt:timestamp, imageData: imageData, description: textCaption)
+      
+      PhotoJournalModel.addIEntry(item: photoItemToSave)
     }
     dismiss(animated: true, completion: nil)
   }
@@ -89,23 +89,35 @@ class AddPhotoEntryController: UIViewController {
     imagePickerController.sourceType = .photoLibrary
     showImagePickerController()
   }
-
+  
   
   
 }
 
 extension AddPhotoEntryController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
   func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-  
+    
   }
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-//      savePhotoJournal(image: image)
+      //      savePhotoJournal(image: image)
       addImage.image = image
       photoSelected = image
     } else {
-     print("original image is nil")
+      print("original image is nil")
     }
     dismiss(animated: true, completion: nil)
   }
 }
+
+extension AddPhotoEntryController: UITextViewDelegate {
+  func textViewDidBeginEditing(_ textView: UITextView) {
+    if addDescription.text == addDescriptionPlaceHolder {
+      textView.text = ""
+      textView.textColor = .black
+    }
+  }
+}
+
+
+
