@@ -47,14 +47,7 @@ class AddPhotoEntryController: UIViewController {
   private func showImagePickerController() {
     present(imagePickerController, animated:  true, completion: nil)
   }
-  
-  //  private func savePhotoJournal(image: UIImage) {
-  //    if let imageData = image.jpegData(compressionQuality: 0.5) {
-  //      let photoJournal = PhotoJournal.init(createdAt: "no date", imageData: imageData, description: "Cool Wall Paper")
-  //      PhotoJournalModel.savePhotoJournal()
-  //    }
-  //  }
-  
+
   
   @IBAction func savePhotoButtonPressed(_ sender: UIButton) {
     guard let textCaption = addDescription.text else {return}

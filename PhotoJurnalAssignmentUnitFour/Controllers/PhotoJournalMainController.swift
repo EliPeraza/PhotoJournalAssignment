@@ -25,8 +25,7 @@ class PhotoJournalMainController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
-    
-    arrayOfPhotoItems = PhotoJournalModel.getPhotoJournal()
+    setPhotosFromModel()
     dump(arrayOfPhotoItems)
     collectionView.dataSource = self
     collectionView.delegate = self
@@ -34,39 +33,52 @@ class PhotoJournalMainController: UIViewController {
   }
   
   override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    setPhotosFromModel()
     collectionView.reloadData()
+
   }
   
-  
+  func setPhotosFromModel() {
+    self.arrayOfPhotoItems = PhotoJournalModel.getPhotoJournal()
+  }
   
   @IBAction func addPhotoEntry(_ sender: Any) {
-    // this is where I present the add/edit controller 
-    
+    let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)
+    guard let vc = storyBoard.instantiateViewController(withIdentifier: "EditController") as? AddPhotoEntryController else { return }
+    vc.modalPresentationStyle = .overCurrentContext
+    self.present(vc, animated: true, completion: nil)
     
   }
   
   
   @IBAction func editButtonPressed(_ sender: UIButton) {
     
-    let actionSheet = UIAlertController(title: "XXXX", message: "Choose an option", preferredStyle: .actionSheet)
-    let deleteAction = UIAlertAction(title: "Delete", style: .destructive)
+    let actionSheet = UIAlertController(title: "Change Entry", message: "Choose an option", preferredStyle: .actionSheet)
     
-    let editAction = UIAlertAction(title: "Edit", style: .default, handler:
-    {
-      (alert:UIAlertAction!) -> Void in
-      //code goes here
-      print("hi")
+    let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: {
+      _ in
+      PhotoJournalModel.delete(atIndex: sender.tag)
     })
     
+    let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
+      
+    }
     
     
     
-    let saveAction = UIAlertAction(title: "Save", style: .default)
-    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+    
+//    let saveAction = UIAlertAction(title: "Save", style: .default)
+    
+   
+
+    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+      self.dismiss(animated: true, completion: nil)
+    }
     
     actionSheet.addAction(deleteAction)
     actionSheet.addAction(editAction)
-    actionSheet.addAction(saveAction)
+//    actionSheet.addAction(saveAction)
     actionSheet.addAction(cancelAction)
     
     self.present(actionSheet, animated: true, completion: nil)
@@ -82,11 +94,12 @@ extension PhotoJournalMainController: UICollectionViewDataSource {
   func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoJournalCell", for: indexPath) as? PhotoJournalCellCollectionViewCell else {return UICollectionViewCell()}
     
-    let itemToPost = arrayOfPhotoItems[indexPath.item]
+    let itemToPost = arrayOfPhotoItems[indexPath.row]
     cell.title.text = itemToPost.description
     cell.date.text = itemToPost.dateFormattedString
     cell.photoImage.image = UIImage(data: itemToPost.imageData)
-    
+    cell.optionsButton.tag = indexPath.row
+    cell.layer.cornerRadius = 40
     return cell
   }
   
@@ -99,5 +112,6 @@ extension PhotoJournalMainController: UICollectionViewDelegateFlowLayout {
     return CGSize.init(width: collectionView.bounds.width, height: collectionView.bounds.height)
     
   }
+
 }
 

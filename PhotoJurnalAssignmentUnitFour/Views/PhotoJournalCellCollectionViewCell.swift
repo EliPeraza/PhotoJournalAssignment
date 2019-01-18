@@ -18,4 +18,7 @@ class PhotoJournalCellCollectionViewCell: UICollectionViewCell {
   
   @IBOutlet weak var date: UILabel!
   
+  @IBOutlet weak var optionsButton: UIButton!
+  
+  
 }

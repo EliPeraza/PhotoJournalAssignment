@@ -52,6 +52,15 @@ final class PhotoJournalModel {
     savePhotoJournal()
   }
   
+  static func delete(atIndex index: Int) {
+    photoItems.remove(at: index)
+    savePhotoJournal()
+  }
+  
+  static func updateItem(updatedItem: PhotoJournal, atIndex index: Int) {
+    photoItems[index] = updatedItem
+    savePhotoJournal()
+  }
   
   
   
