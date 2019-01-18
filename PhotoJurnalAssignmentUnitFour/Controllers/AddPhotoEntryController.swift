@@ -9,6 +9,7 @@
 import UIKit
 
 class AddPhotoEntryController: UIViewController {
+  var imageIndex: Int?
   
   var isEditingPhotoJournal = false
   
@@ -28,18 +29,15 @@ class AddPhotoEntryController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     addDescription.becomeFirstResponder()
-    if isEditingPhotoJournal{
-      setupPhotoBeingEdited()
-    } else {
-      setupPhotoViewController()
-    }
+    setupPhotoBeingEdited()
+    setupPhotoViewController()
     setUpTextViews()
     addDescription.delegate = self
-   
+    
   }
   
   private func setupPhotoBeingEdited(){
-   addDescription.text = photoEntryBeingEdited.description
+    addDescription.text = photoEntryBeingEdited.description
     addImage.image = UIImage.init(data: photoEntryBeingEdited.imageData)
   }
   
@@ -72,8 +70,11 @@ class AddPhotoEntryController: UIViewController {
     if let imageData = photo.jpegData(compressionQuality: 0.5) {
       
       let photoItemToSave = PhotoJournal.init(createdAt:timestamp, imageData: imageData, description: textCaption)
-      
-      PhotoJournalModel.addIEntry(item: photoItemToSave)
+      if let imageIndex = imageIndex, let currentPhoto = photoEntryBeingEdited {
+        PhotoJournalModel.updateItem(updatedItem: photoItemToSave, atIndex: imageIndex)
+      } else {
+        PhotoJournalModel.addIEntry(item: photoItemToSave)
+      }
     }
     dismiss(animated: true, completion: nil)
   }
@@ -106,7 +107,6 @@ extension AddPhotoEntryController: UIImagePickerControllerDelegate, UINavigation
   }
   func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-      //      savePhotoJournal(image: image)
       addImage.image = image
       photoSelected = image
     } else {

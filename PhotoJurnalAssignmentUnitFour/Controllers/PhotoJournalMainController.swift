@@ -63,28 +63,32 @@ class PhotoJournalMainController: UIViewController {
     let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
       let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)
       guard let vc = storyBoard.instantiateViewController(withIdentifier: "EditController") as? AddPhotoEntryController else { return }
+      
+      vc.imageIndex = sender.tag
+      vc.photoEntryBeingEdited = self.arrayOfPhotoItems[sender.tag]
       self.present(vc, animated: true, completion: nil)
-      if vc.isEditingPhotoJournal == true {
-        vc.photoEntryBeingEdited = self.arrayOfPhotoItems[sender.tag]
-      } 
+      
       
     }
-    
-    
-    
-    
-    //    let saveAction = UIAlertAction(title: "Save", style: .default)
-    
     
     
     let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
       self.dismiss(animated: true, completion: nil)
     }
     
+    let shareOption = UIAlertAction(title: "Share", style: .default, handler: {(share) in
+      let shareText =  self.arrayOfPhotoItems[sender.tag].description
+      if let image = UIImage.init(data: self.arrayOfPhotoItems[sender.tag].imageData) {
+        let viewController = UIActivityViewController(activityItems: [shareText, image], applicationActivities: [])
+        self.present(viewController, animated: true)
+      }
+    })
+    
     actionSheet.addAction(deleteAction)
     actionSheet.addAction(editAction)
-    //    actionSheet.addAction(saveAction)
     actionSheet.addAction(cancelAction)
+    actionSheet.addAction(shareOption)
+    
     
     self.present(actionSheet, animated: true, completion: nil)
     
