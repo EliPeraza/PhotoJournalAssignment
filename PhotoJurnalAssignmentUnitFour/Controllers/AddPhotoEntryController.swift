@@ -8,6 +8,11 @@
 
 import UIKit
 
+/*TODO:
+ When edit I can't go back into photo library to change the picture
+I need to reflect instantly when I delete the images
+*/
+
 class AddPhotoEntryController: UIViewController {
   var imageIndex: Int?
   
@@ -29,12 +34,15 @@ class AddPhotoEntryController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     addDescription.becomeFirstResponder()
-    setupPhotoBeingEdited()
-    setupPhotoViewController()
-    setUpTextViews()
+    if isEditingPhotoJournal {
+      setupPhotoBeingEdited()
+    }  else {
+      setupPhotoViewController()
+      setUpTextViews()
+    }
     addDescription.delegate = self
-    
   }
+  
   
   private func setupPhotoBeingEdited(){
     addDescription.text = photoEntryBeingEdited.description
@@ -43,7 +51,7 @@ class AddPhotoEntryController: UIViewController {
   
   private func setUpTextViews() {
     addDescription.text = addDescriptionPlaceHolder
-    addDescription.textColor = .gray
+    addDescription.textColor = .lightGray
   }
   
   private func setupPhotoViewController() {
@@ -70,7 +78,7 @@ class AddPhotoEntryController: UIViewController {
     if let imageData = photo.jpegData(compressionQuality: 0.5) {
       
       let photoItemToSave = PhotoJournal.init(createdAt:timestamp, imageData: imageData, description: textCaption)
-      if let imageIndex = imageIndex, let currentPhoto = photoEntryBeingEdited {
+      if let imageIndex = imageIndex {
         PhotoJournalModel.updateItem(updatedItem: photoItemToSave, atIndex: imageIndex)
       } else {
         PhotoJournalModel.addIEntry(item: photoItemToSave)
@@ -93,6 +101,7 @@ class AddPhotoEntryController: UIViewController {
   
   
   @IBAction func photoLibraryButtonPressed(_ sender: UIBarButtonItem) {
+    //TODO: When edit I can't go back into photo library to change the picture
     imagePickerController.sourceType = .photoLibrary
     showImagePickerController()
   }

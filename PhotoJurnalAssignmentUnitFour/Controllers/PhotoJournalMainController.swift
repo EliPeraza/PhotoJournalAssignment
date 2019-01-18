@@ -63,7 +63,7 @@ class PhotoJournalMainController: UIViewController {
     let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
       let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)
       guard let vc = storyBoard.instantiateViewController(withIdentifier: "EditController") as? AddPhotoEntryController else { return }
-      
+      vc.isEditingPhotoJournal = true 
       vc.imageIndex = sender.tag
       vc.photoEntryBeingEdited = self.arrayOfPhotoItems[sender.tag]
       self.present(vc, animated: true, completion: nil)
