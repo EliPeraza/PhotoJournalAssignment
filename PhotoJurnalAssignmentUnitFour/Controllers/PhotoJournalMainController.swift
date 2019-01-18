@@ -58,6 +58,7 @@ class PhotoJournalMainController: UIViewController {
     let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: {
       _ in
       PhotoJournalModel.delete(atIndex: sender.tag)
+     self.arrayOfPhotoItems = PhotoJournalModel.getPhotoJournal() 
     })
     
     let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
