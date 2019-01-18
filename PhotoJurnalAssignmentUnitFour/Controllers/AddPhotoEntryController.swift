@@ -8,11 +8,6 @@
 
 import UIKit
 
-/*TODO:
- When edit I can't go back into photo library to change the picture
-I need to reflect instantly when I delete the images
-*/
-
 class AddPhotoEntryController: UIViewController {
   var imageIndex: Int?
   
@@ -37,9 +32,9 @@ class AddPhotoEntryController: UIViewController {
     if isEditingPhotoJournal {
       setupPhotoBeingEdited()
     }  else {
-      setupPhotoViewController()
       setUpTextViews()
     }
+    setupPhotoViewController()
     addDescription.delegate = self
   }
   
@@ -47,6 +42,7 @@ class AddPhotoEntryController: UIViewController {
   private func setupPhotoBeingEdited(){
     addDescription.text = photoEntryBeingEdited.description
     addImage.image = UIImage.init(data: photoEntryBeingEdited.imageData)
+    
   }
   
   private func setUpTextViews() {
@@ -58,7 +54,7 @@ class AddPhotoEntryController: UIViewController {
     imagePickerController = UIImagePickerController()
     imagePickerController.delegate = self
     if !UIImagePickerController.isSourceTypeAvailable(.camera) {
-      cameraButton.isSpringLoaded = false
+      cameraButton.isEnabled = false
     }
   }
   
@@ -101,8 +97,7 @@ class AddPhotoEntryController: UIViewController {
   
   
   @IBAction func photoLibraryButtonPressed(_ sender: UIBarButtonItem) {
-    //TODO: When edit I can't go back into photo library to change the picture
-    imagePickerController.sourceType = .photoLibrary
+    //    imagePickerController.sourceType = .photoLibrary
     showImagePickerController()
   }
   
@@ -124,6 +119,7 @@ extension AddPhotoEntryController: UIImagePickerControllerDelegate, UINavigation
     dismiss(animated: true, completion: nil)
   }
 }
+
 
 extension AddPhotoEntryController: UITextViewDelegate {
   func textViewDidBeginEditing(_ textView: UITextView) {

@@ -18,11 +18,9 @@ final class PhotoJournalModel {
   static func savePhotoJournal() {
     let path = DataPersistenceManager.filePathToDocumentsDirectory(filename: filename)
     print(path)
-    
     do {
       let data = try PropertyListEncoder().encode(photoItems)
       try data.write(to: path, options: Data.WritingOptions.atomic)
-      
     } catch {
       print("property list encoding error: \(error)")
     }
@@ -61,7 +59,4 @@ final class PhotoJournalModel {
     photoItems[index] = updatedItem
     savePhotoJournal()
   }
-  
-  
-  
 }

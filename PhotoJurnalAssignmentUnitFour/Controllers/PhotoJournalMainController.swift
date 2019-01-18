@@ -20,7 +20,6 @@ class PhotoJournalMainController: UIViewController {
   
   private var imagePickerViewController: UIImagePickerController!
   
-  
   @IBOutlet weak var collectionView: UICollectionView!
   
   override func viewDidLoad() {
@@ -58,7 +57,7 @@ class PhotoJournalMainController: UIViewController {
     let deleteAction = UIAlertAction(title: "Delete", style: .destructive, handler: {
       _ in
       PhotoJournalModel.delete(atIndex: sender.tag)
-     self.arrayOfPhotoItems = PhotoJournalModel.getPhotoJournal() 
+      self.arrayOfPhotoItems = PhotoJournalModel.getPhotoJournal()
     })
     
     let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
@@ -105,23 +104,21 @@ extension PhotoJournalMainController: UICollectionViewDataSource {
     guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "PhotoJournalCell", for: indexPath) as? PhotoJournalCellCollectionViewCell else {return UICollectionViewCell()}
     
     let itemToPost = arrayOfPhotoItems[indexPath.row]
+    
     cell.title.text = itemToPost.description
     cell.date.text = itemToPost.dateFormattedString
     cell.photoImage.image = UIImage(data: itemToPost.imageData)
     cell.optionsButton.tag = indexPath.row
     cell.layer.cornerRadius = 40
+    
     return cell
   }
-  
   
 }
 
 extension PhotoJournalMainController: UICollectionViewDelegateFlowLayout {
   func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-    
     return CGSize.init(width: collectionView.bounds.width, height: collectionView.bounds.height)
-    
-  }
-  
+  }  
 }
 
