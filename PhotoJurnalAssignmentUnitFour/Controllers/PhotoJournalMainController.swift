@@ -36,7 +36,7 @@ class PhotoJournalMainController: UIViewController {
     super.viewWillAppear(animated)
     setPhotosFromModel()
     collectionView.reloadData()
-
+    
   }
   
   func setPhotosFromModel() {
@@ -46,7 +46,6 @@ class PhotoJournalMainController: UIViewController {
   @IBAction func addPhotoEntry(_ sender: Any) {
     let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)
     guard let vc = storyBoard.instantiateViewController(withIdentifier: "EditController") as? AddPhotoEntryController else { return }
-    vc.modalPresentationStyle = .overCurrentContext
     self.present(vc, animated: true, completion: nil)
     
   }
@@ -62,23 +61,29 @@ class PhotoJournalMainController: UIViewController {
     })
     
     let editAction = UIAlertAction(title: "Edit", style: .default) { _ in
+      let storyBoard = UIStoryboard.init(name: "Main", bundle: nil)
+      guard let vc = storyBoard.instantiateViewController(withIdentifier: "EditController") as? AddPhotoEntryController else { return }
+      self.present(vc, animated: true, completion: nil)
+      if vc.isEditingPhotoJournal == true {
+        vc.photoEntryBeingEdited = self.arrayOfPhotoItems[sender.tag]
+      } 
       
     }
     
     
     
     
-//    let saveAction = UIAlertAction(title: "Save", style: .default)
+    //    let saveAction = UIAlertAction(title: "Save", style: .default)
     
-   
-
+    
+    
     let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
       self.dismiss(animated: true, completion: nil)
     }
     
     actionSheet.addAction(deleteAction)
     actionSheet.addAction(editAction)
-//    actionSheet.addAction(saveAction)
+    //    actionSheet.addAction(saveAction)
     actionSheet.addAction(cancelAction)
     
     self.present(actionSheet, animated: true, completion: nil)
@@ -112,6 +117,6 @@ extension PhotoJournalMainController: UICollectionViewDelegateFlowLayout {
     return CGSize.init(width: collectionView.bounds.width, height: collectionView.bounds.height)
     
   }
-
+  
 }
 

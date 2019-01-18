@@ -10,6 +10,9 @@ import UIKit
 
 class AddPhotoEntryController: UIViewController {
   
+  var isEditingPhotoJournal = false
+  
+  var photoEntryBeingEdited: PhotoJournal!
   
   @IBOutlet weak var cameraButton: UIBarButtonItem!
   
@@ -25,9 +28,19 @@ class AddPhotoEntryController: UIViewController {
   override func viewDidLoad() {
     super.viewDidLoad()
     addDescription.becomeFirstResponder()
-    setupPhotoViewController()
+    if isEditingPhotoJournal{
+      setupPhotoBeingEdited()
+    } else {
+      setupPhotoViewController()
+    }
     setUpTextViews()
     addDescription.delegate = self
+   
+  }
+  
+  private func setupPhotoBeingEdited(){
+   addDescription.text = photoEntryBeingEdited.description
+    addImage.image = UIImage.init(data: photoEntryBeingEdited.imageData)
   }
   
   private func setUpTextViews() {
@@ -47,7 +60,7 @@ class AddPhotoEntryController: UIViewController {
   private func showImagePickerController() {
     present(imagePickerController, animated:  true, completion: nil)
   }
-
+  
   
   @IBAction func savePhotoButtonPressed(_ sender: UIButton) {
     guard let textCaption = addDescription.text else {return}
@@ -57,7 +70,7 @@ class AddPhotoEntryController: UIViewController {
     isoDateFormatter.formatOptions = [.withFullDate, .withFullTime, .withInternetDateTime, .withTimeZone, .withDashSeparatorInDate]
     let timestamp = isoDateFormatter.string(from: date)
     if let imageData = photo.jpegData(compressionQuality: 0.5) {
-    
+      
       let photoItemToSave = PhotoJournal.init(createdAt:timestamp, imageData: imageData, description: textCaption)
       
       PhotoJournalModel.addIEntry(item: photoItemToSave)
